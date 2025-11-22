@@ -1,7 +1,7 @@
 // Main Ludo board visualization component
 
 import React from 'react';
-import Token from './Token.jsx';
+import Token, { BaseToken } from './Token.jsx';
 import { getPossibleMoves } from '../game/gameLogic.js';
 import { TURN_PHASES, ACTION_TYPES } from '../game/turnManager.js';
 import './Board.css';
@@ -189,9 +189,28 @@ const Board = ({ gameState, onAction, turnState }) => {
               gridColumn: col + 1,
             }}
           >
-            {/* Tile content can be added here later */}
             <div className="tile-content">
-              {/* Content will be added when implementing tokens */}
+              {/* Render base tokens for specific tiles */}
+              {row >= 1 && row <= 4 && col >= 1 && col <= 4 && tileClass.includes('tile-base-green') && (
+                <div className="base-token-area">
+                  {renderBaseTokens(gameState?.players?.find(p => p.color === 'GREEN'))}
+                </div>
+              )}
+              {row >= 1 && row <= 4 && col >= 10 && col <= 13 && tileClass.includes('tile-base-blue') && (
+                <div className="base-token-area">
+                  {renderBaseTokens(gameState?.players?.find(p => p.color === 'BLUE'))}
+                </div>
+              )}
+              {row >= 10 && row <= 13 && col >= 10 && col <= 13 && tileClass.includes('tile-base-yellow') && (
+                <div className="base-token-area">
+                  {renderBaseTokens(gameState?.players?.find(p => p.color === 'YELLOW'))}
+                </div>
+              )}
+              {row >= 10 && row <= 13 && col >= 1 && col <= 4 && tileClass.includes('tile-base-red') && (
+                <div className="base-token-area">
+                  {renderBaseTokens(gameState?.players?.find(p => p.color === 'RED'))}
+                </div>
+              )}
             </div>
           </div>
         );
@@ -230,6 +249,31 @@ const Board = ({ gameState, onAction, turnState }) => {
     });
 
     return tokens;
+  };
+
+  /**
+   * Renders tokens in base area for a specific player
+   * @param {Object} player - Player object
+   * @returns {JSX.Element[]} Array of BaseToken components
+   */
+  const renderBaseTokens = (player) => {
+    if (!player?.tokens) return [];
+    
+    const baseTokens = player.tokens.filter(token => !token.position && !token.isOut);
+    
+    return baseTokens.map((token, index) => {
+      const isMovable = movableTokenIds.has(token.id);
+      
+      return (
+        <BaseToken
+          key={token.id}
+          token={token}
+          isMovable={isMovable}
+          basePosition={index}
+          onTokenClick={handleTokenClick}
+        />
+      );
+    });
   };
 
   return (

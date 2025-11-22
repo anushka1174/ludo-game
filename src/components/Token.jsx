@@ -61,10 +61,12 @@ const Token = ({ token, onTokenClick, isMovable = false }) => {
   // Calculate grid position
   const gridStyle = {};
   if (token.position) {
+    // Token is on the board - use its position
     gridStyle.gridRowStart = token.position.row + 1;
     gridStyle.gridColumnStart = token.position.col + 1;
   } else {
-    // Token is in base - don't show on main grid for now
+    // Token is in base - don't render on main grid
+    // Base tokens will be rendered separately in Board component
     return null;
   }
 
@@ -99,6 +101,81 @@ const Token = ({ token, onTokenClick, isMovable = false }) => {
         <span className="token-id">{token.id}</span>
         {token.isSafe && <div className="safe-indicator">🛡️</div>}
         {token.isCompleted && <div className="completed-indicator">👑</div>}
+        {isMovable && <div className="movable-indicator">✨</div>}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * BaseToken component - Renders tokens in base areas
+ * @param {Object} props - Component props
+ * @param {Object} props.token - Token object
+ * @param {Function} props.onTokenClick - Click handler
+ * @param {boolean} props.isMovable - Whether token can be moved
+ * @param {number} props.basePosition - Position within base (0-3)
+ */
+export const BaseToken = ({ token, onTokenClick, isMovable = false, basePosition = 0 }) => {
+  const getTokenColor = (tokenId) => {
+    if (!tokenId) return '#95a5a6';
+    
+    const colorPrefix = tokenId.charAt(0).toLowerCase();
+    switch (colorPrefix) {
+      case 'r': return COLORS.RED;
+      case 'g': return COLORS.GREEN;
+      case 'b': return COLORS.BLUE;
+      case 'y': return COLORS.YELLOW;
+      default: return '#95a5a6';
+    }
+  };
+
+  const getColorName = (tokenId) => {
+    if (!tokenId) return 'gray';
+    
+    const colorPrefix = tokenId.charAt(0).toLowerCase();
+    switch (colorPrefix) {
+      case 'r': return 'red';
+      case 'g': return 'green';
+      case 'b': return 'blue';
+      case 'y': return 'yellow';
+      default: return 'gray';
+    }
+  };
+
+  const handleClick = () => {
+    if (onTokenClick && token?.id) {
+      onTokenClick(token.id);
+    }
+  };
+
+  if (!token) return null;
+
+  const tokenColor = getTokenColor(token.id);
+  const colorName = getColorName(token.id);
+
+  // Position within 2x2 grid in base
+  const gridRow = Math.floor(basePosition / 2) + 1;
+  const gridCol = (basePosition % 2) + 1;
+
+  return (
+    <div
+      className={`token base-token token-${colorName} ${
+        isMovable ? 'movable' : ''
+      }`}
+      style={{
+        gridRowStart: gridRow,
+        gridColumnStart: gridCol,
+        backgroundColor: tokenColor,
+        border: `3px solid ${tokenColor}`,
+        position: 'relative',
+        zIndex: isMovable ? 15 : 10,
+        cursor: isMovable ? 'pointer' : 'default'
+      }}
+      onClick={handleClick}
+      title={`Token ${token.id}${isMovable ? ' - Click to move' : ''}`}
+    >
+      <div className="token-inner">
+        <span className="token-id">{token.id}</span>
         {isMovable && <div className="movable-indicator">✨</div>}
       </div>
     </div>
