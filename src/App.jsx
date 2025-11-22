@@ -87,6 +87,7 @@ function App() {
       <main className="app-main">
         <Board 
           gameState={turnState.gameState}
+          turnState={turnState}
           onAction={handleAction}
         />
       </main>

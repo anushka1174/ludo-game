@@ -9,8 +9,9 @@ import './Token.css';
  * @param {Object} props - Component props
  * @param {Object} props.token - Token object with id, position, and state
  * @param {Function} props.onTokenClick - Callback when token is clicked
+ * @param {boolean} props.isMovable - Whether this token can be moved in current turn
  */
-const Token = ({ token, onTokenClick }) => {
+const Token = ({ token, onTokenClick, isMovable = false }) => {
   /**
    * Determines the color of the token based on its ID
    * @param {string} tokenId - Token ID (e.g., 'R1', 'G3', 'B2', 'Y4')
@@ -72,22 +73,33 @@ const Token = ({ token, onTokenClick }) => {
 
   return (
     <div
-      className={`token token-${colorName} ${token.isCompleted ? 'completed' : ''} ${token.isSafe ? 'safe' : ''}`}
+      className={`token token-${colorName} ${
+        token.isCompleted ? 'completed' : ''
+      } ${
+        token.isSafe ? 'safe' : ''
+      } ${
+        isMovable ? 'movable' : ''
+      }`}
       style={{
         ...gridStyle,
         backgroundColor: tokenColor,
         border: `3px solid ${tokenColor}`,
         filter: token.isCompleted ? 'brightness(1.2) saturate(1.5)' : 'none',
         position: 'absolute',
-        zIndex: 10
+        zIndex: isMovable ? 15 : 10,
+        cursor: isMovable ? 'pointer' : 'default'
       }}
       onClick={handleClick}
-      title={`Token ${token.id} ${token.isCompleted ? '(Completed)' : token.isSafe ? '(Safe)' : ''}`}
+      title={`Token ${token.id} ${
+        token.isCompleted ? '(Completed)' : 
+        token.isSafe ? '(Safe)' : ''
+      }${isMovable ? ' - Click to move' : ''}`}
     >
       <div className="token-inner">
         <span className="token-id">{token.id}</span>
         {token.isSafe && <div className="safe-indicator">🛡️</div>}
         {token.isCompleted && <div className="completed-indicator">👑</div>}
+        {isMovable && <div className="movable-indicator">✨</div>}
       </div>
     </div>
   );

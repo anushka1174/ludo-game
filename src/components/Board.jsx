@@ -2,6 +2,8 @@
 
 import React from 'react';
 import Token from './Token.jsx';
+import { getPossibleMoves } from '../game/gameLogic.js';
+import { TURN_PHASES, ACTION_TYPES } from '../game/turnManager.js';
 import './Board.css';
 
 /**
@@ -10,14 +12,56 @@ import './Board.css';
  * @param {Object} props.gameState - Current game state object
  * @param {Function} props.onAction - Function to dispatch actions to game logic
  */
-const Board = ({ gameState, onAction }) => {
+const Board = ({ gameState, onAction, turnState }) => {
   // Get current player information
   const currentPlayer = gameState?.players?.[gameState.currentPlayerIndex];
   
+  // Extract move data from turnState
+  const currentPhase = turnState?.phase || TURN_PHASES.WAITING_FOR_ROLL;
+  const lastDiceValue = turnState?.currentDiceValue;
+  const isWaitingForMove = currentPhase === TURN_PHASES.WAITING_FOR_MOVE;
+  const isWaitingForRoll = currentPhase === TURN_PHASES.WAITING_FOR_ROLL;
+  
+  // Get possible moves if we're in the move phase
+  const possibleMoves = isWaitingForMove && lastDiceValue 
+    ? getPossibleMoves(gameState, lastDiceValue)
+    : [];
+  
+  // Create set of movable token IDs for quick lookup
+  const movableTokenIds = new Set(possibleMoves.map(token => token.id));
+  
   // Handle dice roll action
   const handleDiceRoll = () => {
-    if (onAction) {
-      onAction({ type: 'ROLL_DICE' });
+    if (onAction && isWaitingForRoll) {
+      onAction({ type: ACTION_TYPES.ROLL_DICE });
+    }
+  };
+  
+  // Handle token click for move selection
+  const handleTokenClick = (tokenId) => {
+    console.log('Token clicked:', tokenId, 'Phase:', currentPhase);
+    
+    // Only handle clicks during move phase
+    if (!isWaitingForMove) {
+      console.log('Not waiting for move. Current phase:', currentPhase);
+      return;
+    }
+    
+    // Check if the clicked token is movable
+    if (!movableTokenIds.has(tokenId)) {
+      console.error('Invalid move: Token', tokenId, 'is not movable');
+      console.log('Available moves:', Array.from(movableTokenIds));
+      return;
+    }
+    
+    // Valid move - dispatch the action
+    if (onAction && lastDiceValue) {
+      console.log('Making move:', tokenId, 'with dice value:', lastDiceValue);
+      onAction({ 
+        type: ACTION_TYPES.MAKE_MOVE, 
+        tokenId: tokenId,
+        diceValue: lastDiceValue 
+      });
     }
   };
 
@@ -171,14 +215,14 @@ const Board = ({ gameState, onAction }) => {
       player.tokens.forEach((token) => {
         // Only render tokens that are out on the board (have a position)
         if (token?.position) {
+          const isMovable = movableTokenIds.has(token.id);
+          
           tokens.push(
             <Token
               key={token.id}
               token={token}
-              onTokenClick={(tokenId) => {
-                console.log('Token clicked:', tokenId);
-                // TODO: Handle token selection for moves
-              }}
+              isMovable={isMovable}
+              onTokenClick={handleTokenClick}
             />
           );
         }
@@ -231,15 +275,34 @@ const Board = ({ gameState, onAction }) => {
           <button 
             className="dice-roll-button"
             onClick={handleDiceRoll}
-            disabled={!currentPlayer || gameState?.isGameOver}
+            disabled={!isWaitingForRoll || !currentPlayer || gameState?.isGameOver}
           >
             🎲 Roll Dice
           </button>
           
+          {/* Display current phase */}
+          <div className="turn-phase-info">
+            <small>Phase: {currentPhase}</small>
+          </div>
+          
           {/* Display last dice roll if available */}
-          {gameState?.lastDiceRoll && (
+          {lastDiceValue && (
             <div className="last-dice-roll">
-              <span>Last Roll: {gameState.lastDiceRoll.value}</span>
+              <span>Last Roll: {lastDiceValue}</span>
+            </div>
+          )}
+          
+          {/* Show possible moves info */}
+          {isWaitingForMove && possibleMoves.length > 0 && (
+            <div className="move-instructions">
+              <small>Click a highlighted token to move ({possibleMoves.length} moves available)</small>
+            </div>
+          )}
+          
+          {/* No moves available message */}
+          {isWaitingForMove && possibleMoves.length === 0 && (
+            <div className="no-moves-message">
+              <small>No valid moves available</small>
             </div>
           )}
         </div>
