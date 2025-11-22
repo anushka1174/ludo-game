@@ -57,211 +57,190 @@
 .current-player-color.yellow { background-color: #f39c12; }
 .current-player-color.none { background-color: #95a5a6; }
 
-/* Main Board Container */
-.board-container {
+/* Grid Board Container */
+.grid-board {
   background: white;
   border-radius: 15px;
-  padding: 20px;
   box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
-.board-row {
-  display: flex;
-  margin-bottom: 10px;
-}
-
-.board-row:last-child {
-  margin-bottom: 0;
-}
-
-/* Base Areas */
-.base-area {
-  width: 200px;
-  height: 200px;
-  border: 3px solid;
-  border-radius: 15px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
-  margin: 5px;
-}
-
-.base-area h3 {
-  margin: 0 0 15px 0;
-  font-size: 1.1em;
-  text-align: center;
-  font-weight: bold;
-}
-
-.red-base {
-  border-color: #e74c3c;
-  background: linear-gradient(145deg, #ffebee, #ffcdd2);
-}
-
-.green-base {
-  border-color: #27ae60;
-  background: linear-gradient(145deg, #e8f5e8, #c8e6c9);
-}
-
-.blue-base {
-  border-color: #3498db;
-  background: linear-gradient(145deg, #e3f2fd, #bbdefb);
-}
-
-.yellow-base {
-  border-color: #f39c12;
-  background: linear-gradient(145deg, #fff8e1, #ffecb3);
-}
-
-.token-slots {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  width: 100%;
-}
-
-.token-slot {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #bdc3c7;
-  border-radius: 50%;
-  background: white;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Track Sections */
-.track-section {
-  flex: 1;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.track-tiles {
-  display: flex;
-  gap: 5px;
-}
-
-.track-tiles.vertical {
-  flex-direction: column;
-}
-
-.track-row {
-  display: flex;
-  gap: 5px;
-}
-
-.track-tile {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #bdc3c7;
-  background: #ecf0f1;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Center Section */
-.center-section {
-  flex: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.home-paths {
+/* Base Tile Styles */
+.tile {
   position: relative;
-  width: 300px;
-  height: 300px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  gap: 5px;
-}
-
-.home-path {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  border-radius: 8px;
+  background: #ecf0f1;
+  border: 1px solid #bdc3c7;
+  transition: all 0.2s ease;
+  min-height: 25px;
+  min-width: 25px;
 }
 
-.home-path span {
-  font-size: 0.8em;
+.tile-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Base Area Tiles */
+.tile-base {
+  border: 2px solid;
   font-weight: bold;
-  margin-bottom: 5px;
-  text-align: center;
 }
 
-.red-home {
-  grid-column: 2;
-  grid-row: 1;
+.tile-base-red {
   background: linear-gradient(145deg, #ffebee, #ffcdd2);
-  border: 2px solid #e74c3c;
+  border-color: #e74c3c;
+  color: #c62828;
 }
 
-.green-home {
-  grid-column: 1;
-  grid-row: 2;
+.tile-base-green {
   background: linear-gradient(145deg, #e8f5e8, #c8e6c9);
-  border: 2px solid #27ae60;
+  border-color: #27ae60;
+  color: #2e7d32;
 }
 
-.blue-home {
-  grid-column: 3;
-  grid-row: 2;
+.tile-base-blue {
   background: linear-gradient(145deg, #e3f2fd, #bbdefb);
-  border: 2px solid #3498db;
+  border-color: #3498db;
+  color: #1565c0;
 }
 
-.yellow-home {
-  grid-column: 2;
-  grid-row: 3;
+.tile-base-yellow {
   background: linear-gradient(145deg, #fff8e1, #ffecb3);
-  border: 2px solid #f39c12;
+  border-color: #f39c12;
+  color: #f57c00;
 }
 
-.center-area {
-  grid-column: 2;
-  grid-row: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Track Tiles */
+.tile-track {
+  background: #ffffff;
+  border: 1px solid #34495e;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.center-triangle {
-  width: 80px;
-  height: 80px;
+.tile-main-track {
+  background: #f8f9fa;
+  border: 2px solid #34495e;
+  font-weight: bold;
+}
+
+.tile-outer-track {
+  background: #ffffff;
+  border: 1px solid #7f8c8d;
+}
+
+/* Starting Position Tiles */
+.tile-start {
+  background: #2c3e50 !important;
+  border: 3px solid;
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.tile-start-red {
+  border-color: #e74c3c;
+  background: linear-gradient(45deg, #e74c3c, #c0392b) !important;
+}
+
+.tile-start-green {
+  border-color: #27ae60;
+  background: linear-gradient(45deg, #27ae60, #229954) !important;
+}
+
+.tile-start-blue {
+  border-color: #3498db;
+  background: linear-gradient(45deg, #3498db, #2980b9) !important;
+}
+
+.tile-start-yellow {
+  border-color: #f39c12;
+  background: linear-gradient(45deg, #f39c12, #e67e22) !important;
+}
+
+/* Home Path Tiles */
+.tile-home {
+  background: #ffffff;
+  border: 2px solid;
+  position: relative;
+}
+
+.tile-home-red {
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  border-color: #e74c3c;
+}
+
+.tile-home-green {
+  background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+  border-color: #27ae60;
+}
+
+.tile-home-blue {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border-color: #3498db;
+}
+
+.tile-home-yellow {
+  background: linear-gradient(135deg, #fff8e1, #ffecb3);
+  border-color: #f39c12;
+}
+
+/* Center Tiles */
+.tile-center {
   background: linear-gradient(45deg, #ffd700, #ffed4e);
   border: 3px solid #f39c12;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(243, 156, 18, 0.4);
   font-weight: bold;
   color: #333;
+}
+
+/* Empty Tiles */
+.tile-empty {
+  background: transparent;
+  border: none;
+}
+
+/* Hover Effects */
+.tile:hover:not(.tile-empty) {
+  transform: scale(1.05);
+  z-index: 10;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.home-tiles {
-  display: flex;
-  gap: 2px;
+.tile-track:hover,
+.tile-home:hover {
+  background: rgba(52, 152, 219, 0.1);
+  border-color: #3498db;
 }
 
-.home-tile {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #bdc3c7;
-  background: white;
-  border-radius: 3px;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+/* Animation for tile interactions */
+.tile {
+  transition: all 0.2s ease;
+}
+
+.tile.highlighted {
+  animation: pulse 1s infinite;
+  box-shadow: 0 0 20px rgba(52, 152, 219, 0.6);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(52, 152, 219, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.6);
+  }
 }
 
 /* Game Controls */
