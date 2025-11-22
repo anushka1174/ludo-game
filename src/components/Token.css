@@ -1,0 +1,180 @@
+/* Token Component Styles */
+
+.token {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  position: relative;
+  user-select: none;
+}
+
+.token:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+}
+
+.token.completed {
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+  animation: completedGlow 2s infinite ease-in-out;
+}
+
+.token.safe {
+  border-style: double !important;
+  border-width: 4px !important;
+}
+
+@keyframes completedGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 215, 0, 1);
+  }
+}
+
+/* Token Inner Content */
+.token-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.token-id {
+  font-size: 8px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  line-height: 1;
+}
+
+/* Status Indicators */
+.safe-indicator,
+.completed-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.completed-indicator {
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Color-specific styles */
+.token-red {
+  background-color: #e74c3c;
+  border-color: #c0392b;
+}
+
+.token-green {
+  background-color: #27ae60;
+  border-color: #229954;
+}
+
+.token-blue {
+  background-color: #3498db;
+  border-color: #2980b9;
+}
+
+.token-yellow {
+  background-color: #f39c12;
+  border-color: #e67e22;
+}
+
+.token-gray {
+  background-color: #95a5a6;
+  border-color: #7f8c8d;
+}
+
+/* Hover effects per color */
+.token-red:hover {
+  background-color: #c0392b;
+  border-color: #a93226;
+}
+
+.token-green:hover {
+  background-color: #229954;
+  border-color: #1e8449;
+}
+
+.token-blue:hover {
+  background-color: #2980b9;
+  border-color: #21618c;
+}
+
+.token-yellow:hover {
+  background-color: #e67e22;
+  border-color: #d35400;
+}
+
+/* Active/Selected state */
+.token.selected {
+  transform: scale(1.3);
+  box-shadow: 0 0 20px rgba(52, 152, 219, 0.8);
+  border-color: #3498db !important;
+  z-index: 25;
+}
+
+.token.highlighted {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .token {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .token-id {
+    font-size: 7px;
+  }
+  
+  .safe-indicator,
+  .completed-indicator {
+    width: 10px;
+    height: 10px;
+    font-size: 7px;
+    top: -3px;
+    right: -3px;
+  }
+}

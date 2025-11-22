@@ -1,6 +1,7 @@
 // Main Ludo board visualization component
 
 import React from 'react';
+import Token from './Token.jsx';
 import './Board.css';
 
 /**
@@ -155,6 +156,38 @@ const Board = ({ gameState, onAction }) => {
     return tiles;
   };
 
+  /**
+   * Renders all tokens for all players
+   * @returns {JSX.Element[]} Array of Token components
+   */
+  const renderTokens = () => {
+    if (!gameState?.players) return [];
+
+    const tokens = [];
+    
+    gameState.players.forEach((player) => {
+      if (!player?.tokens) return;
+      
+      player.tokens.forEach((token) => {
+        // Only render tokens that are out on the board (have a position)
+        if (token?.position) {
+          tokens.push(
+            <Token
+              key={token.id}
+              token={token}
+              onTokenClick={(tokenId) => {
+                console.log('Token clicked:', tokenId);
+                // TODO: Handle token selection for moves
+              }}
+            />
+          );
+        }
+      });
+    });
+
+    return tokens;
+  };
+
   return (
     <div className="ludo-board">
       {/* Board Header */}
@@ -187,6 +220,7 @@ const Board = ({ gameState, onAction }) => {
         }}
       >
         {renderBoardTiles()}
+        {renderTokens()}
       </div>
 
       {/* Game Controls */}
