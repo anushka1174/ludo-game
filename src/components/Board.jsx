@@ -4,6 +4,7 @@ import React from 'react';
 import Token, { BaseToken } from './Token.jsx';
 import { getPossibleMoves } from '../game/gameLogic.js';
 import { TURN_PHASES, ACTION_TYPES } from '../game/turnManager.js';
+import { getDiceUnicode } from '../game/dice.js';
 import './Board.css';
 
 /**
@@ -315,38 +316,61 @@ const Board = ({ gameState, onAction, turnState }) => {
       <div className="game-controls">
         {/* Dice Roll Area */}
         <div className="dice-area">
-          <h3>Dice Roll Area</h3>
+          <h3>Dice Roll</h3>
+          
+          {/* Current dice display */}
+          {lastDiceValue && (
+            <div className="current-dice-display">
+              <div className="dice-visual">
+                <span className="dice-unicode">{getDiceUnicode(lastDiceValue)}</span>
+                <span className="dice-value">{lastDiceValue}</span>
+              </div>
+              {lastDiceValue === 6 && (
+                <div className="dice-bonus">
+                  <span className="bonus-text">🎉 Six! Extra turn!</span>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Roll button */}
           <button 
             className="dice-roll-button"
             onClick={handleDiceRoll}
             disabled={!isWaitingForRoll || !currentPlayer || gameState?.isGameOver}
           >
-            🎲 Roll Dice
+            🎲 {
+              gameState?.isGameOver ? 'Game Over' :
+              !currentPlayer ? 'No Player' :
+              isWaitingForRoll ? 'Roll Dice' : 
+              isWaitingForMove ? 'Choose Move' :
+              'Please Wait...'
+            }
           </button>
           
-          {/* Display current phase */}
-          <div className="turn-phase-info">
-            <small>Phase: {currentPhase}</small>
+          {/* Current phase display */}
+          <div className="turn-phase-display">
+            <span className="phase-label">Phase:</span>
+            <span className={`phase-value ${currentPhase?.toLowerCase()?.replace(/_/g, '-')}`}>
+              {currentPhase?.replace(/_/g, ' ')?.toLowerCase()?.replace(/\b\w/g, l => l.toUpperCase()) || 'Unknown'}
+            </span>
           </div>
           
-          {/* Display last dice roll if available */}
-          {lastDiceValue && (
-            <div className="last-dice-roll">
-              <span>Last Roll: {lastDiceValue}</span>
-            </div>
-          )}
-          
-          {/* Show possible moves info */}
+          {/* Move instructions */}
           {isWaitingForMove && possibleMoves.length > 0 && (
             <div className="move-instructions">
-              <small>Click a highlighted token to move ({possibleMoves.length} moves available)</small>
+              <span className="instruction-icon">👆</span>
+              <span>Click a highlighted token to move</span>
+              <div className="moves-count">{possibleMoves.length} moves available</div>
             </div>
           )}
           
-          {/* No moves available message */}
+          {/* No moves available */}
           {isWaitingForMove && possibleMoves.length === 0 && (
             <div className="no-moves-message">
-              <small>No valid moves available</small>
+              <span className="warning-icon">⚠️</span>
+              <span>No valid moves available</span>
+              <div className="auto-pass">Turn will pass automatically</div>
             </div>
           )}
         </div>
@@ -355,7 +379,29 @@ const Board = ({ gameState, onAction, turnState }) => {
         <div className="game-status">
           <h3>Game Status</h3>
           <div className="status-info">
-            <div className="turn-count">Turn: {gameState?.turnCount || 0}</div>
+            <div className="game-progress">
+              <div className="turn-info">
+                <span className="turn-label">Turn:</span>
+                <span className="turn-value">{gameState?.turnCount || 0}</span>
+              </div>
+              
+              {currentPlayer && (
+                <div className="current-player-info">
+                  <span className="player-label">Current:</span>
+                  <span className={`player-name ${currentPlayer.color?.toLowerCase()}`}>
+                    {currentPlayer.color}
+                  </span>
+                </div>
+              )}
+              
+              {/* Available moves for current player */}
+              {currentPlayer && possibleMoves.length > 0 && (
+                <div className="available-moves">
+                  <span className="moves-label">Available Moves:</span>
+                  <span className="moves-count">{possibleMoves.length}</span>
+                </div>
+              )}
+            </div>
             
             {gameState?.isGameOver ? (
               <div className="game-over">
@@ -363,7 +409,10 @@ const Board = ({ gameState, onAction, turnState }) => {
                 Winners: {gameState.winners?.join(', ') || 'None'}
               </div>
             ) : (
-              <div className="game-active">Game in Progress</div>
+              <div className="game-active">
+                <span className="status-icon">🎮</span>
+                Game in Progress
+              </div>
             )}
           </div>
         </div>
