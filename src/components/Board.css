@@ -1,0 +1,408 @@
+/* Ludo Board Component Styles */
+
+.ludo-board {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Board Header */
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.board-title {
+  margin: 0;
+  color: white;
+  font-size: 2em;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.current-player-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.current-player-label {
+  color: white;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.current-player-color {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.current-player-color.red { background-color: #e74c3c; }
+.current-player-color.green { background-color: #27ae60; }
+.current-player-color.blue { background-color: #3498db; }
+.current-player-color.yellow { background-color: #f39c12; }
+.current-player-color.none { background-color: #95a5a6; }
+
+/* Main Board Container */
+.board-container {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.board-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.board-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Base Areas */
+.base-area {
+  width: 200px;
+  height: 200px;
+  border: 3px solid;
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+  margin: 5px;
+}
+
+.base-area h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.1em;
+  text-align: center;
+  font-weight: bold;
+}
+
+.red-base {
+  border-color: #e74c3c;
+  background: linear-gradient(145deg, #ffebee, #ffcdd2);
+}
+
+.green-base {
+  border-color: #27ae60;
+  background: linear-gradient(145deg, #e8f5e8, #c8e6c9);
+}
+
+.blue-base {
+  border-color: #3498db;
+  background: linear-gradient(145deg, #e3f2fd, #bbdefb);
+}
+
+.yellow-base {
+  border-color: #f39c12;
+  background: linear-gradient(145deg, #fff8e1, #ffecb3);
+}
+
+.token-slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  width: 100%;
+}
+
+.token-slot {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #bdc3c7;
+  border-radius: 50%;
+  background: white;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Track Sections */
+.track-section {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-tiles {
+  display: flex;
+  gap: 5px;
+}
+
+.track-tiles.vertical {
+  flex-direction: column;
+}
+
+.track-row {
+  display: flex;
+  gap: 5px;
+}
+
+.track-tile {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #bdc3c7;
+  background: #ecf0f1;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Center Section */
+.center-section {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.home-paths {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 5px;
+}
+
+.home-path {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.home-path span {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.red-home {
+  grid-column: 2;
+  grid-row: 1;
+  background: linear-gradient(145deg, #ffebee, #ffcdd2);
+  border: 2px solid #e74c3c;
+}
+
+.green-home {
+  grid-column: 1;
+  grid-row: 2;
+  background: linear-gradient(145deg, #e8f5e8, #c8e6c9);
+  border: 2px solid #27ae60;
+}
+
+.blue-home {
+  grid-column: 3;
+  grid-row: 2;
+  background: linear-gradient(145deg, #e3f2fd, #bbdefb);
+  border: 2px solid #3498db;
+}
+
+.yellow-home {
+  grid-column: 2;
+  grid-row: 3;
+  background: linear-gradient(145deg, #fff8e1, #ffecb3);
+  border: 2px solid #f39c12;
+}
+
+.center-area {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.center-triangle {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  border: 3px solid #f39c12;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #333;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.home-tiles {
+  display: flex;
+  gap: 2px;
+}
+
+.home-tile {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #bdc3c7;
+  background: white;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Game Controls */
+.game-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.dice-area, .game-status, .players-overview {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dice-area h3, .game-status h3, .players-overview h3 {
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+  font-size: 1.2em;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 10px;
+}
+
+.dice-roll-button {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(145deg, #3498db, #2980b9);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dice-roll-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dice-roll-button:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.last-dice-roll {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.game-over {
+  color: #27ae60;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.game-active {
+  color: #3498db;
+  font-weight: bold;
+}
+
+/* Players Overview */
+.players-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.player-status {
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.player-status.active {
+  border-color: #3498db;
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}
+
+.player-status.red { background-color: #ffebee; }
+.player-status.green { background-color: #e8f5e8; }
+.player-status.blue { background-color: #e3f2fd; }
+.player-status.yellow { background-color: #fff8e1; }
+
+.player-name {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.player-tokens-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  gap: 5px;
+}
+
+.player-tokens-info span {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ludo-board {
+    padding: 10px;
+  }
+  
+  .board-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .game-controls {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .base-area {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .home-paths {
+    width: 250px;
+    height: 250px;
+  }
+}
