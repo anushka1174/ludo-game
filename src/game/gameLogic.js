@@ -5,7 +5,8 @@ import {
   moveToken, 
   getValidMoves, 
   hasValidMoves, 
-  canCapture
+  canCapture,
+  isOnHomePath
 } from './token.js';
 import { 
   getCurrentPlayer, 
@@ -114,7 +115,9 @@ export const handleMove = (gameState, tokenId, diceValue) => {
     // Check each opponent's tokens for potential capture
     const playersAfterCapture = otherPlayers.map(player => {
       const tokensAfterCapture = player.tokens.map(token => {
-        if (canCapture(token, updatedToken.position, {})) {
+        // Check if token can be captured (not on home path and position matches)
+        if (canCapture(token, updatedToken.position) && 
+            !isOnHomePath(token, player)) {
           captureOccurred = true;
           // Reset captured token to base
           return {
@@ -162,7 +165,7 @@ export const handleMove = (gameState, tokenId, diceValue) => {
   // Extra turn conditions:
   // 1. Rolled a 6
   // 2. Captured an opponent token
-  // 3. Token completed its journey to home
+  // 3. Token completed its journey to home (reached center)
   if (isSix(diceValue) || 
       updatedGameState.lastCapture?.capturingPlayerId === currentPlayer.id ||
       updatedToken.isCompleted) {

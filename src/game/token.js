@@ -42,7 +42,7 @@ export const moveToken = (token, diceValue, player, constants) => {
       ...token,
       position: newPosition,
       isOut: true,
-      isSafe: isOnSafeTile(newPosition, constants),
+      isSafe: isOnSafeTile(newPosition),
       isCompleted: false
     };
   }
@@ -51,12 +51,12 @@ export const moveToken = (token, diceValue, player, constants) => {
   const newPosition = getNextPosition(token.position, diceValue, player, constants);
   
   // Check if token has completed the journey
-  const completed = isTokenCompleted(newPosition, player, constants);
+  const completed = isTokenCompleted(newPosition);
   
   return {
     ...token,
     position: newPosition,
-    isSafe: completed || isOnSafeTile(newPosition, constants),
+    isSafe: completed || isOnSafeTile(newPosition) || isOnHomePath({ position: newPosition }, player),
     isCompleted: completed
   };
 };
@@ -85,31 +85,36 @@ export const getNextPosition = (currentPosition, steps, player, constants) => {
       pos.row === player.homeEntryTile.row && pos.col === player.homeEntryTile.col
     );
 
-    // Calculate new position on main track
-    let newIndex = (mainTrackIndex + steps) % TOTAL_TILES;
-
     // Check if we pass or land on home entry
-    const passesHomeEntry = (mainTrackIndex < homeEntryIndex && 
-                           (mainTrackIndex + steps) >= homeEntryIndex) ||
-                          (mainTrackIndex > homeEntryIndex && 
-                           (mainTrackIndex + steps) >= TOTAL_TILES + homeEntryIndex);
+    let passesHomeEntry = false;
+    let remainingSteps = 0;
+    
+    if (mainTrackIndex <= homeEntryIndex) {
+      // Normal forward movement
+      if ((mainTrackIndex + steps) >= homeEntryIndex) {
+        passesHomeEntry = true;
+        remainingSteps = steps - (homeEntryIndex - mainTrackIndex);
+      }
+    } else {
+      // Wrapping around the track
+      const stepsToComplete = TOTAL_TILES - mainTrackIndex;
+      if (steps >= stepsToComplete + homeEntryIndex) {
+        passesHomeEntry = true;
+        remainingSteps = steps - stepsToComplete - homeEntryIndex;
+      }
+    }
 
     if (passesHomeEntry) {
-      // Calculate remaining steps after reaching home entry
-      let remainingSteps;
-      if (mainTrackIndex < homeEntryIndex) {
-        remainingSteps = steps - (homeEntryIndex - mainTrackIndex);
-      } else {
-        remainingSteps = steps - (TOTAL_TILES + homeEntryIndex - mainTrackIndex);
-      }
-
-      // If we have remaining steps, move into home path
+      // If we have remaining steps after reaching home entry, move into home path
       if (remainingSteps > 0) {
         if (remainingSteps <= HOME_PATH_LENGTH) {
           return { ...player.homePath[remainingSteps - 1] };
+        } else if (remainingSteps === HOME_PATH_LENGTH + 1) {
+          // Reached center (completed)
+          return { ...CENTER_POSITION };
         } else {
-          // Can't move beyond home, stay at entry
-          return { ...player.homeEntryTile };
+          // Overshooting center - invalid move, return current position
+          return { ...currentPosition };
         }
       } else {
         // Land exactly on home entry
@@ -117,7 +122,8 @@ export const getNextPosition = (currentPosition, steps, player, constants) => {
       }
     }
 
-    // Normal movement on main track
+    // Normal movement on main track (no home entry)
+    const newIndex = (mainTrackIndex + steps) % TOTAL_TILES;
     return { ...MAIN_TRACK[newIndex] };
   }
 
@@ -129,12 +135,13 @@ export const getNextPosition = (currentPosition, steps, player, constants) => {
   if (homePathIndex !== -1) {
     const newHomeIndex = homePathIndex + steps;
     if (newHomeIndex < HOME_PATH_LENGTH) {
+      // Move forward on home path
       return { ...player.homePath[newHomeIndex] };
     } else if (newHomeIndex === HOME_PATH_LENGTH) {
-      // Reached center (completed)
+      // Reached center (completed) - exactly HOME_PATH_LENGTH steps from entry
       return { ...CENTER_POSITION };
     } else {
-      // Can't move beyond center, stay in current position
+      // Overshooting center - invalid move, must land exactly
       return { ...currentPosition };
     }
   }
@@ -146,25 +153,36 @@ export const getNextPosition = (currentPosition, steps, player, constants) => {
 /**
  * Checks if a position is on a safe tile
  * @param {Object} position - Position to check {row, col}
- * @param {Object} constants - Game constants
  * @returns {boolean} True if position is safe
  */
-export const isOnSafeTile = (position, constants) => {
+export const isOnSafeTile = (position) => {
   if (!position) return false;
   
-  return SAFE_TILES.some(safeTile => 
+  return SAFE_TILES.some(safeTile =>
     safeTile.row === position.row && safeTile.col === position.col
+  );
+};
+
+/**
+ * Checks if a token is on its home path (inherently safe from capture)
+ * @param {Object} token - Token to check
+ * @param {Object} player - Player who owns the token
+ * @returns {boolean} True if token is on home path
+ */
+export const isOnHomePath = (token, player) => {
+  if (!token.position || !player.homePath) return false;
+  
+  return player.homePath.some(pathPos =>
+    pathPos.row === token.position.row && pathPos.col === token.position.col
   );
 };
 
 /**
  * Checks if a token has completed its journey (reached center)
  * @param {Object} position - Token position to check
- * @param {Object} player - Player who owns the token
- * @param {Object} constants - Game constants
  * @returns {boolean} True if token is completed
  */
-export const isTokenCompleted = (position, player, constants) => {
+export const isTokenCompleted = (position) => {
   if (!position) return false;
   
   return position.row === CENTER_POSITION.row && 
@@ -175,10 +193,9 @@ export const isTokenCompleted = (position, player, constants) => {
  * Checks if a moving token can capture an opponent's token
  * @param {Object} opponentToken - Opponent's token to potentially capture
  * @param {Object} newPosition - Position where moving token will land
- * @param {Object} constants - Game constants
  * @returns {boolean} True if capture is possible
  */
-export const canCapture = (opponentToken, newPosition, constants) => {
+export const canCapture = (opponentToken, newPosition) => {
   if (!opponentToken || !newPosition || !opponentToken.position) {
     return false;
   }
@@ -189,9 +206,13 @@ export const canCapture = (opponentToken, newPosition, constants) => {
   }
 
   // Can't capture if new position is a safe tile
-  if (isOnSafeTile(newPosition, constants)) {
+  if (isOnSafeTile(newPosition)) {
     return false;
   }
+
+  // Can't capture if opponent token is on its home path (inherently safe)
+  // Note: We need player context to check home path, but this is a design limitation
+  // The calling code should handle this by checking isOnHomePath separately
 
   // Check if positions match
   return opponentToken.position.row === newPosition.row && 
@@ -291,10 +312,9 @@ export const hasValidMoves = (player, diceValue, constants) => {
  * Calculates the distance a token needs to travel to complete
  * @param {Object} token - Token to calculate distance for
  * @param {Object} player - Player who owns the token
- * @param {Object} constants - Game constants
  * @returns {number} Steps needed to complete (or -1 if not calculable)
  */
-export const getDistanceToComplete = (token, player, constants) => {
+export const getDistanceToComplete = (token, player) => {
   if (!token.isOut || token.isCompleted) {
     return -1;
   }
